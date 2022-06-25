@@ -1,4 +1,6 @@
 data/**
 assets/**
 
+.vscode/**
+
 **/__pycache__/**
