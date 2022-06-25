@@ -20,7 +20,7 @@ def decode_seq_cat(seq_cat):
     return obj_id, action_id, subject_id
 
 
-class OakInkImage(object):
+class OakInkImage:
 
     def __init__(self, data_split="all", mode_split="default") -> None:
         self._name = "OakInkImage"

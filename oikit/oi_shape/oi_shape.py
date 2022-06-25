@@ -7,45 +7,35 @@ import numpy as np
 import torch
 import trimesh
 from manotorch.manolayer import ManoLayer, MANOOutput
-from oikit.oi_shape.oi_utils import (
-    ALL_CAT,
-    ALL_SPLIT,
-    ALL_INTENT,
-    CENTER_IDX,
-    to_list,
-    check_valid,
-    get_hand_parameter,
-    get_obj_path,
-    vis_dataset,
-)
+from oikit.oi_shape.utils import (ALL_CAT, ALL_SPLIT, ALL_INTENT, CENTER_IDX, to_list, check_valid, get_hand_parameter,
+                                  get_obj_path, vis_dataset, suppress_trimesh_logging)
 
 from tqdm import tqdm
 
 
 class OakInkShape:
+
     def __init__(
-        self,
-        data_split=ALL_SPLIT,
-        intent_mode=list(ALL_INTENT),
-        category=ALL_CAT,
-        data_root="./data/",
-        oi_shape_root="./data/oakink_shape_v2",
-        mano_assets_root="assets/mano_v1_2",
-        meta_root="./data/metaV2",
+            self,
+            data_split=ALL_SPLIT,
+            intent_mode=list(ALL_INTENT),
+            category=ALL_CAT,
+            mano_assets_root="assets/mano_v1_2",
     ):
         self.name = "OakInkShape"
+
+        assert 'OAKINK_DIR' in os.environ, "environment variable 'OAKINK_DIR' is not set"
+        data_dir = os.path.join(os.environ['OAKINK_DIR'], "shape")
+        oi_shape_dir = os.path.join(data_dir, "oakink_shape_v2")
+        meta_dir = os.path.join(data_dir, "metaV2")
 
         self.data_split = to_list(data_split)
         self.categories = to_list(category)
         self.intent_mode = to_list(intent_mode)
-        assert (
-            check_valid(self.data_split, ALL_SPLIT)
-            and check_valid(self.categories, ALL_CAT)
-            and check_valid(self.intent_mode, list(ALL_INTENT))
-        ), "invalid data split, category, or intent!"
+        assert (check_valid(self.data_split, ALL_SPLIT) and check_valid(self.categories, ALL_CAT) and
+                check_valid(self.intent_mode, list(ALL_INTENT))), "invalid data split, category, or intent!"
 
         self.intent_idx = [ALL_INTENT[i] for i in self.intent_mode]
-        self.data_root_dir = oi_shape_root
 
         self.mano_layer = ManoLayer(center_idx=0, mano_assets_root=mano_assets_root)
         # * >>>> filter with regex
@@ -55,7 +45,7 @@ class OakInkShape:
         for cat in tqdm(self.categories):
             real_matcher = re.compile(rf"({cat}/(.{{6}})/.{{10}})/hand_param\.pkl$")
             virtual_matcher = re.compile(rf"({cat}/(.{{6}})/.{{10}})/(.{{6}})/hand_param\.pkl$")
-            path = os.path.join(self.data_root_dir, cat)
+            path = os.path.join(oi_shape_dir, cat)
             category_begin_idx.append(len(grasp_list))
             for cur, dirs, files in os.walk(path, followlinks=False):
                 dirs.sort()
@@ -66,7 +56,7 @@ class OakInkShape:
                     if len(re_match) > 0:
                         # ? regex should return : [(path, raw_oid, tag, [oid])]
                         assert len(re_match) == 1, "regex should return only one match"
-                        source = open(os.path.join(self.data_root_dir, re_match[0][0], "source.txt")).read()
+                        source = open(os.path.join(oi_shape_dir, re_match[0][0], "source.txt")).read()
                         grasp_cat_match = seq_cat_matcher.findall(source)[0]
                         pass_stage, raw_obj_id, action_id, subject_id, seq_ts = (
                             grasp_cat_match[0],
@@ -151,12 +141,8 @@ class OakInkShape:
                     else:
                         break
                 for j, alt_g in enumerate(grasp_list[cat_begin_idx:]):
-                    if (
-                        g["seq_ts"] == alt_g["seq_ts"]
-                        and g["obj_id"] == alt_g["obj_id"]
-                        and g["pass_stage"] == alt_g["pass_stage"]
-                        and g["source"] != alt_g["source"]
-                    ):
+                    if (g["seq_ts"] == alt_g["seq_ts"] and g["obj_id"] == alt_g["obj_id"] and
+                            g["pass_stage"] == alt_g["pass_stage"] and g["source"] != alt_g["source"]):
                         assert g["subject_id"] == alt_g["subject_alt_id"] and g["subject_alt_id"] == alt_g["subject_id"]
                         g["alt_grasp_item"] = {
                             "alt_joints": alt_g["joints"],
@@ -170,12 +156,14 @@ class OakInkShape:
         # * <<<<
 
         # * >>>> create obj warehouse
+        suppress_trimesh_logging()
         self.obj_warehouse = {}
         obj_id_set = {g["obj_id"] for g in grasp_list}
         for oid in tqdm(obj_id_set):
-            obj_trimesh = trimesh.load(
-                get_obj_path(oid, data_root, meta_root), process=False, force="mesh", skip_materials=True
-            )
+            obj_trimesh = trimesh.load(get_obj_path(oid, data_dir, meta_dir),
+                                       process=False,
+                                       force="mesh",
+                                       skip_materials=True)
             bbox_center = (obj_trimesh.vertices.min(0) + obj_trimesh.vertices.max(0)) / 2
             obj_trimesh.vertices = obj_trimesh.vertices - bbox_center
 

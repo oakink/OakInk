@@ -2,7 +2,7 @@ import os
 import argparse
 import random
 import cv2
-from oikit.oi_image.oi_image import OakInkImage
+from oikit.oi_image import OakInkImage
 from oikit.oi_image.viz_tool import draw_wireframe, draw_wireframe_hand, caption_view
 from termcolor import cprint
 
