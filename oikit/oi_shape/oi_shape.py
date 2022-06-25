@@ -57,7 +57,8 @@ class OakInkShape:
             virtual_matcher = re.compile(rf"({cat}/(.{{6}})/.{{10}})/(.{{6}})/hand_param\.pkl$")
             path = os.path.join(self.data_root_dir, cat)
             category_begin_idx.append(len(grasp_list))
-            for cur, _, files in os.walk(path, followlinks=False):
+            for cur, dirs, files in os.walk(path, followlinks=False):
+                dirs.sort()
                 for f in files:
                     re_match = virtual_matcher.findall(os.path.join(cur, f))
                     is_virtual = len(re_match) > 0

@@ -82,10 +82,10 @@ def get_obj_path(oid, data_path, meta_path, use_downsample=True, key="align"):
     virtual_meta = json.load(open(os.path.join(meta_path, "virtual_object_id.json"), "r"))
     if oid in real_meta:
         obj_name = real_meta[oid]["name"]
-        obj_path = os.path.join(data_path, "yodaObjectsV2")
+        obj_path = os.path.join(data_path, "OakInkObjectsV2")
     else:
         obj_name = virtual_meta[oid]["name"]
-        obj_path = os.path.join(data_path, "yodaVirtualObjectsV2")
+        obj_path = os.path.join(data_path, "OakInkVirtualObjectsV2")
     obj_mesh_path = list(
         glob.glob(os.path.join(obj_path, obj_name, obj_suffix_path, "*.obj"))
         + glob.glob(os.path.join(obj_path, obj_name, obj_suffix_path, "*.ply"))
