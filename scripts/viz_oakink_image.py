@@ -18,10 +18,11 @@ def main(arg):
         image = oiset.get_image(i)
         joints_2d = oiset.get_joints_2d(i)
         corners_2d = oiset.get_corners_2d(i)
+        sample_status = oiset.get_sample_status(i)
         draw_wireframe_hand(image, joints_2d, None)
         draw_wireframe(image, vert_list=corners_2d)
 
-        image = caption_view(image, caption=f":: test")
+        image = caption_view(image, caption=f":: {sample_status}")
         cv2.imshow("x", cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
         cv2.waitKey(0)
 
