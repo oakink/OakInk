@@ -1,0 +1,22 @@
+name: oakink
+channels:
+  - defaults
+dependencies:
+  - python=3.8.11
+  - pip
+  - setuptools
+  - cython
+  - nvidia::cudatoolkit=11.1
+  - numpy
+  - pillow
+  - pytorch::pytorch=1.9.1
+  - bottler::nvidiacub
+  - pytorch::torchaudio=0.9.1
+  - pytorch::torchvision=0.10.1
+  - pip:
+      - opencv-python
+      - trimesh
+      - imageio
+      - git+https://github.com/lixiny/manotorch.git
+      - git+https://github.com/facebookresearch/pytorch3d@v0.6.0
+      - termcolor

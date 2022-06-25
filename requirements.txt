@@ -1,0 +1,6 @@
+numpy
+imageio
+trimesh
+opencv-python
+pillow
+manotorch@git+https://github.com/lixiny/manotorch.git
