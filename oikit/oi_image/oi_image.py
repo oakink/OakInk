@@ -5,8 +5,9 @@ import pickle
 import imageio
 import numpy as np
 import trimesh
+from oikit.common import suppress_trimesh_logging
 
-from .utils import load_object, load_object_by_id, persp_project, suppress_trimesh_logging
+from .utils import load_object, load_object_by_id, persp_project
 
 
 def decode_seq_cat(seq_cat):

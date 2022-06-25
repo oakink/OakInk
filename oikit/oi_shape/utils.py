@@ -58,11 +58,6 @@ ALL_INTENT = {
 CENTER_IDX = 9
 
 
-def suppress_trimesh_logging():
-    logger = logging.getLogger("trimesh")
-    logger.setLevel(logging.ERROR)
-
-
 def to_list(x):
     if isinstance(x, list):
         return x
