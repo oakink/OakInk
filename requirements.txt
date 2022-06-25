@@ -3,4 +3,5 @@ imageio
 trimesh
 opencv-python
 pillow
+chumpy==0.70
 manotorch@git+https://github.com/lixiny/manotorch.git
