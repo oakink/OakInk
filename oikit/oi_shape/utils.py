@@ -95,7 +95,7 @@ def get_obj_path(oid, data_path, meta_path, use_downsample=True, key="align"):
     return obj_mesh_path[0]
 
 
-def vis_dataset(dataset):
+def viz_dataset(dataset):
 
     import open3d as o3d
 

@@ -5,6 +5,7 @@ import pickle
 import imageio
 import numpy as np
 import trimesh
+from oikit.common import quat_to_aa, quat_to_rotmat, rotmat_to_aa
 from oikit.common import suppress_trimesh_logging
 
 from .utils import load_object, load_object_by_id, persp_project
@@ -106,10 +107,32 @@ class OakInkImage:
         return persp_project(verts_3d, cam_intr)
 
     def get_mano_pose(self, idx):
-        pass
+        general_info_path = os.path.join(self._data_dir, "image", "anno", "general_info",
+                                         f"{self.info_str_list[idx]}.pkl")
+        with open(general_info_path, "rb") as f:
+            general_info = pickle.load(f)
+        raw_hand_anno = general_info["hand_anno"]
+
+        raw_hand_pose = raw_hand_anno["hand_pose"]  # quat (16, 4)
+        _wrist, _remain = raw_hand_pose[0, :], raw_hand_pose[1:, :]
+        cam_extr = general_info["cam_extr"]  # SE3 (4, 4))
+        extr_R = cam_extr[:3, :3]  # (3, 3)
+
+        wrist_R = extr_R.matmul(quat_to_rotmat(_wrist))  # (3, 3)
+        wrist = rotmat_to_aa(wrist_R).unsqueeze(0).numpy()  # (1, 3)
+        remain = quat_to_aa(_remain).numpy()  # (15, 3)
+        hand_pose = np.concatenate([wrist, remain], axis=0)  # (16, 3)
+
+        return hand_pose.astype(np.float32)
 
     def get_mano_shape(self, idx):
-        pass
+        general_info_path = os.path.join(self._data_dir, "image", "anno", "general_info",
+                                         f"{self.info_str_list[idx]}.pkl")
+        with open(general_info_path, "rb") as f:
+            general_info = pickle.load(f)
+        raw_hand_anno = general_info["hand_anno"]
+        hand_shape = raw_hand_anno["hand_shape"].numpy().astype(np.float32)
+        return hand_shape
 
     def get_obj_idx(self, idx):
         info = self.info_list[idx][0]

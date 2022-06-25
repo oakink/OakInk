@@ -16,7 +16,6 @@ from oikit.oi_shape.utils import (
     get_hand_parameter,
     get_obj_path,
     to_list,
-    vis_dataset,
 )
 from tqdm import tqdm
 
@@ -209,20 +208,3 @@ class OakInkShape:
             alt_grasp_item["alt_hand_shape"],
             alt_grasp_item["alt_hand_tsl"],
         )
-
-
-if __name__ == "__main__":
-
-    # list all grasps
-    dataset: OakInkShape = OakInkShape()
-
-    # list the handover intent grasps on the pen in train split
-    # dataset: OakInkShape = OakInkShape(category="pen", intent_mode="handover", data_split="train")
-
-    # list the handover && use intent grasps on the pen && mug in train && val split
-    # dataset: OakInkShape = OakInkShape(category=["pen", "mug"], intent_mode=["handover", "use"], data_split=["train", "val"])
-
-    print(len(dataset))
-
-    # visualize grasp
-    vis_dataset(dataset)
