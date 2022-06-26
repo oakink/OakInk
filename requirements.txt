@@ -3,5 +3,11 @@ imageio
 trimesh
 opencv-python
 pillow
+termcolor
+open3d
+torch
+cython
+fvcore
 chumpy==0.70
 manotorch@git+https://github.com/lixiny/manotorch.git
+pytorch3d@git+https://github.com/facebookresearch/pytorch3d@v0.6.0
