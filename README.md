@@ -159,11 +159,3 @@ If you find OakInk dataset and **oikit** useful for your research, please consid
       year      = {2022},
     }
 
-Currently the **Preview** version of **OakInk** dataset can be found at the [project page](http://www.oakink.net). (which is not properly organized and may have missing or disordered annotation.)
-
-**Released** tag planned date:
-
-- [ ] OakInk-Image-v1: 28th June 2022 (Dropbox & Baidu Pan)
-- [x] OakInk-Shape: 26th June 2022 (Dropbox & Baidu Pan)
-
-Download the full dataset with **Released** version.
