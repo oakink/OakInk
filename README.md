@@ -63,8 +63,8 @@ We test the installation with:
 First, clone the repo:
 
 ```Shell
-git clone https://github.com/lixiny/OakInk.git
-cd OakInk
+$ git clone https://github.com/lixiny/OakInk.git
+$ cd OakInk
 ```
 
 There are two different ways to use **oikit** in your project: **_stand-alone_** and **_import-as-package_**.
@@ -75,8 +75,8 @@ For a good practice to use python package, we recommend users to use `conda` env
 The **_stand-alone_** mode will create an isolated `conda` env called: `oakink`:
 
 ```Shell
-conda env create -f environment.yaml
-pip install -r requirements.txt
+$ conda env create -f environment.yaml
+$ pip install -r requirements.txt
 ```
 
 ## import-as-package (recommended)
@@ -88,45 +88,81 @@ To be able to import **oikit**, you need:
 2. go to your `OakInk` directory and run:
 
 ```Shell
-pip install .
+$ pip install .
 ```
 
 To test the installation is complete, run:
 
 ```Shell
-python -c "from oikit.oi_image import OakInkImage"
+$ python -c "from oikit.oi_image import OakInkImage"
 ```
 
 no error, no worry. Now you can use **oikit** in this env.
 
 # Download Dataset
 
-1. Download the OakInk dataset (containing the Image and Shape subsets) from the [project site](http://www.oakink.net).
-2. Arrange all the unzipped folders in the dataset path:
+1. Download the OakInk dataset (containing the Image and Shape subsets) from the [project site](http://www.oakink.net). Arrange all zip files into a folder: `/path/to/oakink_data/` as follow:
 
    ```
-   /path/to/oakink/data
-   ├── image
-   │   ├── anno/
-   │   ├── obj/
-   │   └── stream_release_v2/
-   └── shape
-       ├── metaV2/
-       ├── OakInkObjectsV2/
-       ├── oakink_shape_v2/
-       └── OakInkVirtualObjectsV2/
+    .
+    ├── image
+    │   ├── anno.zip
+    │   ├── obj.zip
+    │   └── stream_zipped
+    │       ├── oakink_image_v2.z01
+    │       ├── ...
+    │       ├── oakink_image_v2.z10
+    │       └── oakink_image_v2.zip
+    └── shape
+        ├── metaV2.zip
+        ├── OakInkObjectsV2.zip
+        ├── oakink_shape_v2.zip
+        └── OakInkVirtualObjectsV2.zip
    ```
 
-3. Set the environment variable `$OAKINK_DIR` for dataset path:
+2. Extract the files.
+
+- For the `image/anno.zip`, `image/obj.zip` and `shape/*.zip`, you can simply _unzip_ it at the same level of the `.zip` file:
+  ```Shell
+  $ unzip obj.zip
+  ```
+- For the 11 split zip files in `image/stream_zipped`, you need to _cd_ into the `image/` directory, run:
+  ```Shell
+  $ zip -F ./stream_zipped/oakink_image_v2.zip --out single-archive.zip
+  ```
+  This will combine the split zip files into a single .zip, at `image/single-archive.zip`. Finally, _unzip_ the combined archive:
+  ```Shell
+  $ unzip single-archive.zip
+  ```
+  After all the extractions are finished, you will have a your `/path/to/oakink_data/` as the following structure:
+  ```
+  .
+  ├── image
+  │   ├── anno
+  │   ├── obj
+  │   └── stream_release_v2
+  │       ├── A01001_0001_0000
+  │       ├── A01001_0001_0001
+  │       ├── A01001_0001_0002
+  │       ├── ....
+  │
+  └── shape
+      ├── metaV2
+      ├── OakInkObjectsV2
+      ├── oakink_shape_v2
+      └── OakInkVirtualObjectsV2
+  ```
+
+3. Set the environment variable `$OAKINK_DIR` to your dataset folder:
 
    ```Shell
-   export OAKINK_DIR=/path/to/oakink/data
+   $ export OAKINK_DIR=/path/to/oakink_data
    ```
 
 4. Download `mano_v1_2.zip` from the [MANO website](https://mano.is.tue.mpg.de), unzip the file and create symlink in `assets` folder:
    ```Shell
-   mkdir assets
-   ln -s path/to/mano_v1_2 assets/
+   $ mkdir assets
+   $ ln -s path/to/mano_v1_2 assets/
    ```
 
 ## Load Dataset and Visualize
@@ -135,17 +171,17 @@ we provide three scripts to provide basic usage for data loading and visualizing
 
 1. visualize OakInk-Image set on sequence level:
    ```Shell
-   python scripts/viz_oakink_image_seq.py (--help)
+   $ python scripts/viz_oakink_image_seq.py (--help)
    ```
 2. use OakInkImage to load data_split: `all` and visualize:
 
    ```Shell
-   python scripts/viz_oakink_image.py (--help)
+   $ python scripts/viz_oakink_image.py (--help)
    ```
 
 3. visualize OakInk-Shape set with object category and subject intent
    ```Shell
-   python scripts/viz_oakink_shape.py --categories teapot --intent_mode use (--help)
+   $ python scripts/viz_oakink_shape.py --categories teapot --intent_mode use (--help)
    ```
 
 ## Citing OakInk Toolkit
@@ -154,8 +190,7 @@ If you find OakInk dataset and **oikit** useful for your research, please consid
 
     @InProceedings{YangCVPR2022OakInk,
       author    = {Yang, Lixin and Li, Kailin and Zhan, Xinyu and Wu, Fei and Xu, Anran and Liu, Liu and Lu, Cewu},
-      booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
       title     = {{OakInk}: A Large-Scale Knowledge Repository for Understanding Hand-Object Interaction},
+      booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
       year      = {2022},
     }
-
