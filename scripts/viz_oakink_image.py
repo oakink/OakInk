@@ -11,6 +11,7 @@ def main(arg):
 
     oiset = OakInkImage(data_split=arg.data_split, mode_split=arg.mode_split)
 
+    print("Got # of samples:", len(oiset))
     sample_idxs = list(range(len(oiset)))
     random.shuffle(sample_idxs)
     print("Press any key to continue viewing")
@@ -24,7 +25,12 @@ def main(arg):
 
         image = caption_view(image, caption=f":: {sample_status}")
         cv2.imshow("x", cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
-        cv2.waitKey(0)
+        while True:
+            key = cv2.waitKey(1)
+            if key != -1:
+                break
+        if key == ord("\r") or key == ord("\n"):
+            break
 
     print("EXIT")
 
@@ -33,16 +39,20 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="OakInkImage visualization")
     parser.add_argument("--data_dir", type=str, default="data", help="environment variable 'OAKINK_DIR'")
-    parser.add_argument("--data_split",
-                        type=str,
-                        default="all",
-                        choices=["all", "train", "test", "val"],
-                        help="training data split")
-    parser.add_argument("--mode_split",
-                        type=str,
-                        default="default",
-                        choices=["default", "object", "subject"],
-                        help="training mode split, see paper for more details")
+    parser.add_argument(
+        "--data_split",
+        type=str,
+        default="all",
+        choices=["all", "train+val", "test", "train", "val"],
+        help="training data split",
+    )
+    parser.add_argument(
+        "--mode_split",
+        type=str,
+        default="default",
+        choices=["default", "object", "subject", "handobject"],
+        help="training mode split, see paper for more details",
+    )
     arg = parser.parse_args()
     os.environ["OAKINK_DIR"] = arg.data_dir
     main(arg)

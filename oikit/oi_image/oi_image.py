@@ -23,15 +23,40 @@ def decode_seq_cat(seq_cat):
 
 
 class OakInkImage:
+    @staticmethod
+    def _get_info_list(data_dir, split_key, data_split):
+        if data_split == "train+val":
+            info_list = json.load(open(os.path.join(data_dir, "image", "anno", "split", split_key, "seq_train.json")))
+        elif data_split == "train":
+            info_list = json.load(
+                open(os.path.join(data_dir, "image", "anno", "split_train_val", split_key, "example_split_train.json"))
+            )
+        elif data_split == "val":
+            info_list = json.load(
+                open(os.path.join(data_dir, "image", "anno", "split_train_val", split_key, "example_split_val.json"))
+            )
+        else:  # data_split == "test":
+            info_list = json.load(open(os.path.join(data_dir, "image", "anno", "split", split_key, "seq_test.json")))
+        return info_list
 
     def __init__(self, data_split="all", mode_split="default") -> None:
         self._name = "OakInkImage"
         self._data_split = data_split
         self._mode_split = mode_split
-        assert 'OAKINK_DIR' in os.environ, "environment variable 'OAKINK_DIR' is not set"
+        assert "OAKINK_DIR" in os.environ, "environment variable 'OAKINK_DIR' is not set"
 
-        self._data_dir = os.environ['OAKINK_DIR']
-        self.info_list = json.load(open(os.path.join(self._data_dir, "image", "anno", "seq_all.json")))
+        self._data_dir = os.environ["OAKINK_DIR"]
+        if self._data_split == "all":
+            self.info_list = json.load(open(os.path.join(self._data_dir, "image", "anno", "seq_all.json")))
+        elif self._mode_split == "default":
+            self.info_list = self._get_info_list(self._data_dir, "split0", self._data_split)
+        elif self._mode_split == "subject":
+            self.info_list = self._get_info_list(self._data_dir, "split1", self._data_split)
+        elif self._mode_split == "object":
+            self.info_list = self._get_info_list(self._data_dir, "split2", self._data_split)
+        else: # self._mode_split == "handobject":
+            self.info_list = self._get_info_list(self._data_dir, "split0_ho", self._data_split)
+
         self.info_str_list = []
         for info in self.info_list:
             info_str = "__".join([str(x) for x in info])
@@ -107,8 +132,9 @@ class OakInkImage:
         return persp_project(verts_3d, cam_intr)
 
     def get_mano_pose(self, idx):
-        general_info_path = os.path.join(self._data_dir, "image", "anno", "general_info",
-                                         f"{self.info_str_list[idx]}.pkl")
+        general_info_path = os.path.join(
+            self._data_dir, "image", "anno", "general_info", f"{self.info_str_list[idx]}.pkl"
+        )
         with open(general_info_path, "rb") as f:
             general_info = pickle.load(f)
         raw_hand_anno = general_info["hand_anno"]
@@ -126,8 +152,9 @@ class OakInkImage:
         return hand_pose.astype(np.float32)
 
     def get_mano_shape(self, idx):
-        general_info_path = os.path.join(self._data_dir, "image", "anno", "general_info",
-                                         f"{self.info_str_list[idx]}.pkl")
+        general_info_path = os.path.join(
+            self._data_dir, "image", "anno", "general_info", f"{self.info_str_list[idx]}.pkl"
+        )
         with open(general_info_path, "rb") as f:
             general_info = pickle.load(f)
         raw_hand_anno = general_info["hand_anno"]
@@ -194,7 +221,6 @@ class OakInkImage:
 
 
 class OakInkImageSequence(OakInkImage):
-
     def __init__(self, seq_id, view_id) -> None:
 
         self.framedata_color_name = [
@@ -206,8 +232,8 @@ class OakInkImageSequence(OakInkImage):
         view_name = self.framedata_color_name[view_id]
         self._name = f"OakInkImage_{seq_id}_{view_name}"
 
-        assert 'OAKINK_DIR' in os.environ, "environment variable 'OAKINK_DIR' is not set"
-        self._data_dir = os.environ['OAKINK_DIR']
+        assert "OAKINK_DIR" in os.environ, "environment variable 'OAKINK_DIR' is not set"
+        self._data_dir = os.environ["OAKINK_DIR"]
         info_list_all = json.load(open(os.path.join(self._data_dir, "image", "anno", "seq_all.json")))
 
         seq_cat, seq_timestamp = seq_id.split("/")
