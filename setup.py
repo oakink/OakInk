@@ -22,11 +22,11 @@ setup(
     version="1.0.0",
     author="Lixin Yang",
     author_email="siriusyang@sjtu.edu.cn",
-    description="OakInk",
+    description="OakInk tooKIT",
     long_description=readme(),
     long_description_content_type="text/markdown",
     url=r"https://github.com/lixiny/OakInk.git",
-    packages=find_packages(exclude=["data", "assets"]),
+    packages=find_packages(exclude=["data", "assets", "scripts", "docs"]),
     python_requires=">=3.8.0",
     install_requires=get_dep(),
 )

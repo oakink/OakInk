@@ -33,24 +33,164 @@
     <a href='https://arxiv.org/abs/2203.15709' style='padding-left: 0.5rem;'>
       <img src='https://img.shields.io/badge/ArXiv-PDF-green?style=flat&logo=arXiv&logoColor=green' alt='ArXiv PDF'>
     </a>
-    <a href='http://www.oakink.net' style='padding-left: 0.5rem;'>
+    <a href='https://oakink.net' style='padding-left: 0.5rem;'>
       <img src='https://img.shields.io/badge/Project-Page-blue?style=flat&logo=Google%20chrome&logoColor=blue' alt='Project Page'>
-    <a href='#' style='padding-left: 0.5rem;'>
+    <a href='https://www.youtube.com/watch?v=vNTdeXlLdU8' style='padding-left: 0.5rem;'>
       <img src='https://img.shields.io/badge/Youtube-Video-red?style=flat&logo=youtube&logoColor=red' alt='Youtube Video'>
     </a>
   </p>
 </p>
 <br />
 
-This repo contains the **OakInk** dataset toolkit.
+This repo contains OakInk Toolkit **oikit** -- a Python package that provides data loading and visualization tools for the OakInk-Image and OakInk-Shape dataset.
 
-Currently the **Preview** version of **OakInk** dataset can be found at the [project page](http://www.oakink.net). (which is not properly organized and may have missing or disordered annotation.)
+# Installation
 
-**Released** tag planned date:  
-- [ ] OakInk-Image-v1: 28th June 2022 (Dropbox & Baidu Pan)  
-- [ ] OakInk-Shape:  26th June 2022 (Dropbox & Baidu Pan)  
+We test the installation with:  
+<a href="https://releases.ubuntu.com/20.04/">
+<img alt="Ubuntu" src="https://img.shields.io/badge/Ubuntu-20.04-green?logo=ubuntu&logoColor=yelgreenlow">
+</a>
+<a href="https://developer.nvidia.com/cuda-11.1.0-download-archive">
+<img alt="PyTorch" src="https://img.shields.io/badge/CUDA-11.1-yellow?logo=nvidia&logoColor=yellow">
+</a>
+<a href="">
+<img alt="Python" src="https://img.shields.io/badge/Python-3.8-yellow?logo=python&logoColor=yellow">
+</a>
+<a href="https://pytorch.org/get-started/locally/">
+<img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-1.9.1-yellow?logo=pytorch&logoColor=red">
+</a>
 
-Download the full dataset with **Released** version.
+First, clone the repo:
 
+```Shell
+$ git clone https://github.com/lixiny/OakInk.git
+$ cd OakInk
+```
 
+There are two different ways to use **oikit** in your project: **_stand-alone_** and **_import-as-package_**.
 
+## stand-alone
+
+For a good practice to use python package, we recommend users to use `conda` environment.  
+The **_stand-alone_** mode will create an isolated `conda` env called: `oakink`:
+
+```Shell
+$ conda env create -f environment.yaml
+$ pip install -r requirements.txt
+```
+
+## import-as-package (recommended)
+
+In most cases, users want to use **oikit** in other `conda` env.  
+To be able to import **oikit**, you need:
+
+1. activate the destination env (we suppose that python, cudatookit, and pytorch have already been installed)
+2. go to your `OakInk` directory and run:
+
+```Shell
+$ pip install .
+```
+
+To test the installation is complete, run:
+
+```Shell
+$ python -c "from oikit.oi_image import OakInkImage"
+```
+
+no error, no worry. Now you can use **oikit** in this env.
+
+# Download Dataset
+
+1. Download the OakInk dataset (containing the Image and Shape subsets) from the [project site](http://www.oakink.net). Arrange all zip files into a folder: `/path/to/oakink_data/` as follow:
+
+   ```
+    .
+    ├── image
+    │   ├── anno.zip
+    │   ├── obj.zip
+    │   └── stream_zipped
+    │       ├── oakink_image_v2.z01
+    │       ├── ...
+    │       ├── oakink_image_v2.z10
+    │       └── oakink_image_v2.zip
+    └── shape
+        ├── metaV2.zip
+        ├── OakInkObjectsV2.zip
+        ├── oakink_shape_v2.zip
+        └── OakInkVirtualObjectsV2.zip
+   ```
+
+2. Extract the files.
+
+- For the `image/anno.zip`, `image/obj.zip` and `shape/*.zip`, you can simply _unzip_ it at the same level of the `.zip` file:
+  ```Shell
+  $ unzip obj.zip
+  ```
+- For the 11 split zip files in `image/stream_zipped`, you need to _cd_ into the `image/` directory, run:
+  ```Shell
+  $ zip -F ./stream_zipped/oakink_image_v2.zip --out single-archive.zip
+  ```
+  This will combine the split zip files into a single .zip, at `image/single-archive.zip`. Finally, _unzip_ the combined archive:
+  ```Shell
+  $ unzip single-archive.zip
+  ```
+  After all the extractions are finished, you will have a your `/path/to/oakink_data/` as the following structure:
+  ```
+  .
+  ├── image
+  │   ├── anno
+  │   ├── obj
+  │   └── stream_release_v2
+  │       ├── A01001_0001_0000
+  │       ├── A01001_0001_0001
+  │       ├── A01001_0001_0002
+  │       ├── ....
+  │
+  └── shape
+      ├── metaV2
+      ├── OakInkObjectsV2
+      ├── oakink_shape_v2
+      └── OakInkVirtualObjectsV2
+  ```
+
+3. Set the environment variable `$OAKINK_DIR` to your dataset folder:
+
+   ```Shell
+   $ export OAKINK_DIR=/path/to/oakink_data
+   ```
+
+4. Download `mano_v1_2.zip` from the [MANO website](https://mano.is.tue.mpg.de), unzip the file and create symlink in `assets` folder:
+   ```Shell
+   $ mkdir assets
+   $ ln -s path/to/mano_v1_2 assets/
+   ```
+
+## Load Dataset and Visualize
+
+we provide three scripts to provide basic usage for data loading and visualizing:
+
+1. visualize OakInk-Image set on sequence level:
+   ```Shell
+   $ python scripts/viz_oakink_image_seq.py (--help)
+   ```
+2. use OakInkImage to load data_split: `all` and visualize:
+
+   ```Shell
+   $ python scripts/viz_oakink_image.py (--help)
+   ```
+
+3. visualize OakInk-Shape set with object category and subject intent
+   ```Shell
+   $ python scripts/viz_oakink_shape.py --categories teapot --intent_mode use (--help)
+   ```
+
+## Citing OakInk Toolkit
+
+If you find OakInk dataset and **oikit** useful for your research, please considering cite us:
+
+    @InProceedings{YangCVPR2022OakInk,
+      author    = {Yang, Lixin and Li, Kailin and Zhan, Xinyu and Wu, Fei and Xu, Anran and Liu, Liu and Lu, Cewu},
+      title     = {{OakInk}: A Large-Scale Knowledge Repository for Understanding Hand-Object Interaction},
+      booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+      year      = {2022},
+    }
