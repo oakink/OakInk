@@ -139,7 +139,7 @@ class OakInkImage:
             general_info = pickle.load(f)
         raw_hand_anno = general_info["hand_anno"]
 
-        raw_hand_pose = raw_hand_anno["hand_pose"]  # quat (16, 4)
+        raw_hand_pose = (raw_hand_anno["hand_pose"]).reshape((16, 4))  # quat (16, 4)
         _wrist, _remain = raw_hand_pose[0, :], raw_hand_pose[1:, :]
         cam_extr = general_info["cam_extr"]  # SE3 (4, 4))
         extr_R = cam_extr[:3, :3]  # (3, 3)
