@@ -13,7 +13,7 @@ def main(arg):
 
     oiset = OakInkImage(data_split=arg.data_split, mode_split=arg.mode_split)
     save_prefix = os.path.join(
-        "/home/xinyu/yoda_hand/common/release/zip_release__release_rc2/anno_packed", arg.mode_split, arg.data_split
+        "./data/image/anno_packed", arg.mode_split, arg.data_split
     )
     os.makedirs(save_prefix, exist_ok=True)
 
