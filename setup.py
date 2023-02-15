@@ -19,7 +19,7 @@ def get_dep():
 
 setup(
     name="oikit",
-    version="1.0.0",
+    version="1.0.1",
     author="Lixin Yang",
     author_email="siriusyang@sjtu.edu.cn",
     description="OakInk tooKIT",
