@@ -67,21 +67,27 @@ $ git clone https://github.com/lixiny/OakInk.git
 $ cd OakInk
 ```
 
-There are two different ways to use **oikit** in your project: **_stand-alone_** and **_import-as-package_**.
+There are two different ways to use **oikit**: **_stand-alone_** and **_import-as-package_**.
 
 ## stand-alone
 
-For a good practice to use python package, we recommend users to use `conda` environment.  
-The **_stand-alone_** mode will create an isolated `conda` env called: `oakink`:
+We use `conda` to manage environment.  
+The **_stand-alone_** mode will create an isolated conda env called: `oakink`:
 
 ```Shell
 $ conda env create -f environment.yaml
+$ conda activate oakink
 $ pip install -r requirements.txt
 ```
 
+This environment provide you a base environment to load and visualize the OakInk dataset.
+
+> :warning: In this case, you must use the **oikit** inside the OakInk directory.  
+> Otherwise, you will get an error: `ModuleNotFoundError: No module named 'oikit'`.
+
 ## import-as-package (recommended)
 
-In most cases, users want to use **oikit** in other `conda` env.  
+In most cases, you want to use **oikit** in other conda env.  
 To be able to import **oikit**, you need:
 
 1. activate the destination env (we suppose that python, cudatookit, and pytorch have already been installed)
@@ -101,7 +107,7 @@ no error, no worry. Now you can use **oikit** in this env.
 
 # Download Datasets
 
-1. Download the datasets (OakInk-Image and OakInk-Shape) from the [project site](http://www.oakink.net). 
+1. Download the datasets (OakInk-Image and OakInk-Shape) from the [project site](http://www.oakink.net).
    Arrange all zip files into a directory: `path/to/data` as follow:
 
    ```
@@ -183,22 +189,21 @@ we provide three scripts to provide basic usage for data loading and visualizing
    $ python scripts/viz_oakink_shape.py --categories teapot --intent_mode use (--help)
    ```
 
-
 # Download Oak Base
+
 Download the `OakBase.zip` (containing object parts segmentation and attributes) from the [project site](http://www.oakink.net). unzip it to `path/to/data`. The directory structure should be like this:
-``` shell
+
+```shell
   ├── image      # OakInk-Image dataset
   ├── shape      # OakInk-Shape dataset
   └── OakBase    # Oak Base
 ```
 
 we provide demo script to show how to access the Oak Base:
-``` shell
+
+```shell
 $ python scripts/demo_oak_base.py --data_dir path/to/data
 ```
-
-
-
 
 # Citation
 
