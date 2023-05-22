@@ -149,7 +149,6 @@ def viz_dataset(dataset):
     def update_vis(vis):
         nonlocal curr_idx_in_vis_list
         try:
-            print(curr_idx_in_vis_list)
             grasp = dataset[curr_idx_in_vis_list]
         except:
             raise Exception("finish!")

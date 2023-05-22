@@ -29,13 +29,21 @@ class OakInkShape:
                  intent_mode=list(ALL_INTENT),
                  category=ALL_CAT,
                  mano_assets_root="assets/mano_v1_2",
-                 use_cache=True):
+                 use_cache=True,
+                 use_downsample_mesh=False):
         self.name = "OakInkShape"
 
         assert 'OAKINK_DIR' in os.environ, "environment variable 'OAKINK_DIR' is not set"
         data_dir = os.path.join(os.environ['OAKINK_DIR'], "shape")
         oi_shape_dir = os.path.join(data_dir, "oakink_shape_v2")
         meta_dir = os.path.join(data_dir, "metaV2")
+
+        if data_split == 'all':
+            data_split = ALL_SPLIT
+        if category == 'all':
+            category = ALL_CAT
+        if intent_mode == 'all':
+            intent_mode = list(ALL_INTENT)
 
         self.data_split = to_list(data_split)
         self.categories = to_list(category)
@@ -191,10 +199,8 @@ class OakInkShape:
         self.obj_warehouse = {}
         obj_id_set = {g["obj_id"] for g in grasp_list}
         for oid in tqdm(obj_id_set, desc="Load obj model"):
-            obj_trimesh = trimesh.load(get_obj_path(oid, data_dir, meta_dir, use_downsample=True),
-                                       process=False,
-                                       force="mesh",
-                                       skip_materials=True)
+            obj_path = get_obj_path(oid, data_dir, meta_dir, use_downsample=use_downsample_mesh)
+            obj_trimesh = trimesh.load(obj_path, process=False, force="mesh", skip_materials=True)
             bbox_center = (obj_trimesh.vertices.min(0) + obj_trimesh.vertices.max(0)) / 2
             obj_trimesh.vertices = obj_trimesh.vertices - bbox_center
             self.obj_warehouse[oid] = obj_trimesh
