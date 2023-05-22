@@ -18,8 +18,8 @@ def get_dep():
 
 
 setup(
-    name="oakink",
-    version="1.0.0",
+    name="oikit",
+    version="1.0.1",
     author="Lixin Yang",
     author_email="siriusyang@sjtu.edu.cn",
     description="OakInk tooKIT",

@@ -42,7 +42,7 @@
 </p>
 <br />
 
-This repo contains OakInk Toolkit **oikit** -- a Python package that provides data loading and visualization tools for the OakInk-Image and OakInk-Shape dataset.
+This repo contains OakInk Toolkit **oikit** -- a Python package that provides data loading and visualization tools for the OakInk-Image, OakInk-Shape dataset and Oak base.
 
 # Installation
 
@@ -67,21 +67,27 @@ $ git clone https://github.com/lixiny/OakInk.git
 $ cd OakInk
 ```
 
-There are two different ways to use **oikit** in your project: **_stand-alone_** and **_import-as-package_**.
+There are two different ways to use **oikit**: **_stand-alone_** and **_import-as-package_**.
 
 ## stand-alone
 
-For a good practice to use python package, we recommend users to use `conda` environment.  
-The **_stand-alone_** mode will create an isolated `conda` env called: `oakink`:
+We use `conda` to manage environment.  
+The **_stand-alone_** mode will create an isolated conda env called: `oakink`:
 
 ```Shell
 $ conda env create -f environment.yaml
+$ conda activate oakink
 $ pip install -r requirements.txt
 ```
 
+This environment provide you a base environment to load and visualize the OakInk dataset.
+
+> :warning: In this case, you must use the **oikit** inside the OakInk directory.  
+> Otherwise, you will get an error: `ModuleNotFoundError: No module named 'oikit'`.
+
 ## import-as-package (recommended)
 
-In most cases, users want to use **oikit** in other `conda` env.  
+In most cases, you want to use **oikit** in other conda env.  
 To be able to import **oikit**, you need:
 
 1. activate the destination env (we suppose that python, cudatookit, and pytorch have already been installed)
@@ -99,9 +105,10 @@ $ python -c "from oikit.oi_image import OakInkImage"
 
 no error, no worry. Now you can use **oikit** in this env.
 
-# Download Dataset
+# Download Datasets
 
-1. Download the OakInk dataset (containing the Image and Shape subsets) from the [project site](http://www.oakink.net). Arrange all zip files into a folder: `/path/to/oakink_data/` as follow:
+1. Download the datasets (OakInk-Image and OakInk-Shape) from the [project site](http://www.oakink.net).
+   Arrange all zip files into a directory: `path/to/data` as follow:
 
    ```
     .
@@ -134,7 +141,7 @@ no error, no worry. Now you can use **oikit** in this env.
   ```Shell
   $ unzip single-archive.zip
   ```
-  After all the extractions are finished, you will have a your `/path/to/oakink_data/` as the following structure:
+  After all the extractions are finished, you will have a your directory `path/to/data` of the following structure:
   ```
   .
   ├── image
@@ -142,8 +149,6 @@ no error, no worry. Now you can use **oikit** in this env.
   │   ├── obj
   │   └── stream_release_v2
   │       ├── A01001_0001_0000
-  │       ├── A01001_0001_0001
-  │       ├── A01001_0001_0002
   │       ├── ....
   │
   └── shape
@@ -156,7 +161,7 @@ no error, no worry. Now you can use **oikit** in this env.
 3. Set the environment variable `$OAKINK_DIR` to your dataset folder:
 
    ```Shell
-   $ export OAKINK_DIR=/path/to/oakink_data
+   $ export OAKINK_DIR=path/to/data
    ```
 
 4. Download `mano_v1_2.zip` from the [MANO website](https://mano.is.tue.mpg.de), unzip the file and create symlink in `assets` folder:
@@ -184,7 +189,23 @@ we provide three scripts to provide basic usage for data loading and visualizing
    $ python scripts/viz_oakink_shape.py --categories teapot --intent_mode use (--help)
    ```
 
-## Citing OakInk Toolkit
+# Download Oak Base
+
+Download the `OakBase.zip` (containing object parts segmentation and attributes) from the [project site](http://www.oakink.net). unzip it to `path/to/data`. The directory structure should be like this:
+
+```shell
+  ├── image      # OakInk-Image dataset
+  ├── shape      # OakInk-Shape dataset
+  └── OakBase    # Oak Base
+```
+
+we provide demo script to show how to access the Oak Base:
+
+```shell
+$ python scripts/demo_oak_base.py --data_dir path/to/data
+```
+
+# Citation
 
 If you find OakInk dataset and **oikit** useful for your research, please considering cite us:
 
