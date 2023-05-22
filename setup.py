@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+import importlib
 import os
 
 
@@ -13,9 +14,23 @@ def get_dep():
     req_txt = os.path.join(os.path.dirname(os.path.normpath(__file__)), "requirements.txt")
     with open(req_txt, "r") as f:
         content = f.read()
-    res = [el for el in content.split("\n") if len(el) > 0]
-    return res
 
+    res_default = [el for el in content.split("\n") if len(el) > 0 and "@git+" not in el]
+    res_thirdparty = [el for el in content.split("\n") if len(el) > 0 and "@git+" in el]
+
+    res_final = []
+    for el in res_thirdparty:
+        pkg = el.split("@git+")[0]
+        try:
+            importlib.import_module(pkg)
+        except ImportError:
+            res_final.append(el)
+
+    res_final.extend(res_default)
+    return res_final
+
+
+get_dep()
 
 setup(
     name="oikit",
