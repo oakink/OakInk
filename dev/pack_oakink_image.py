@@ -12,9 +12,8 @@ import pickle
 def main(arg):
 
     oiset = OakInkImage(data_split=arg.data_split, mode_split=arg.mode_split)
-    save_prefix = os.path.join(
-        "./data/image/anno_packed", arg.mode_split, arg.data_split
-    )
+    # save_prefix = os.path.join("./data/image/anno_packed", arg.mode_split, arg.data_split)
+    save_prefix = os.path.join(arg.data_dir, "image", "anno_packed", arg.mode_split, arg.data_split)
     os.makedirs(save_prefix, exist_ok=True)
 
     print("Got # of samples:", len(oiset))

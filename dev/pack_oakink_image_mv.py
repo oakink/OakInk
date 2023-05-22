@@ -11,7 +11,8 @@ import pickle
 
 
 def extract_cam_extr(oiset, idx):
-    general_info_path = os.path.join(oiset._data_dir, "image", "anno", "general_info", f"{oiset.info_str_list[idx]}.pkl")
+    general_info_path = os.path.join(oiset._data_dir, "image", "anno", "general_info",
+                                     f"{oiset.info_str_list[idx]}.pkl")
     with open(general_info_path, "rb") as f:
         general_info = pickle.load(f)
     cam_extr = general_info["cam_extr"].numpy().astype(np.float32)
@@ -21,7 +22,8 @@ def extract_cam_extr(oiset, idx):
 def main(arg):
 
     oiset = OakInkImageMV(data_split=arg.data_split, mode_split=arg.mode_split)
-    save_prefix = os.path.join("./data/image/anno_packed_mv", arg.mode_split, arg.data_split)
+    # save_prefix = os.path.join("./data/image/anno_packed_mv", arg.mode_split, arg.data_split)
+    save_prefix = os.path.join(arg.data_dir, "image", "anno_packed_mv", arg.mode_split, arg.data_split)
     os.makedirs(save_prefix, exist_ok=True)
 
     print("Got # of samples:", len(oiset))

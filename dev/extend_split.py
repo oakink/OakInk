@@ -39,7 +39,7 @@ def main(arg):
         for vid in range(4):
             res.append((pk, sid, fid, vid))
 
-    save_prefix = os.path.join("./data/image/anno_mv")
+    save_prefix = os.path.join(arg.data_dir, "image", "anno_mv")
     os.makedirs(save_prefix, exist_ok=True)
     if arg.data_split == "train+val":
         save_file = os.path.join(save_prefix, "split", split_key, "seq_train.json")

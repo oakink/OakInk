@@ -71,7 +71,7 @@ There are two different ways to use **oikit**: **_stand-alone_** and **_import-a
 
 ## stand-alone
 
-We use `conda` to manage environment.  
+We use [conda](https://docs.conda.io/en/latest/) to manage environment.  
 The **_stand-alone_** mode will create an isolated conda env called: `oakink`:
 
 ```Shell
@@ -108,7 +108,7 @@ no error, no worry. Now you can use **oikit** in this env.
 # Download Datasets
 
 1. Download the datasets (OakInk-Image and OakInk-Shape) from the [project site](http://www.oakink.net).
-   Arrange all zip files into a directory: `path/to/data` as follow:
+   Arrange all zip files into a directory: `path/to/OakInk` as follow:
 
    ```
     .
@@ -141,7 +141,7 @@ no error, no worry. Now you can use **oikit** in this env.
   ```Shell
   $ unzip single-archive.zip
   ```
-  After all the extractions are finished, you will have a your directory `path/to/data` of the following structure:
+  After all the extractions are finished, you will have a your directory `path/to/OakInk` of the following structure:
   ```
   .
   ├── image
@@ -161,7 +161,7 @@ no error, no worry. Now you can use **oikit** in this env.
 3. Set the environment variable `$OAKINK_DIR` to your dataset folder:
 
    ```Shell
-   $ export OAKINK_DIR=path/to/data
+   $ export OAKINK_DIR=path/to/OakInk
    ```
 
 4. Download `mano_v1_2.zip` from the [MANO website](https://mano.is.tue.mpg.de), unzip the file and create symlink in `assets` folder:
@@ -191,7 +191,7 @@ we provide three scripts to provide basic usage for data loading and visualizing
 
 # Download Oak Base
 
-Download the `OakBase.zip` (containing object parts segmentation and attributes) from the [project site](http://www.oakink.net). unzip it to `path/to/data`. The directory structure should be like this:
+Download the `OakBase.zip` (containing object parts segmentation and attributes) from the [project site](http://www.oakink.net). unzip it to `path/to/OakInk`. The directory structure should be like this:
 
 ```shell
   ├── image      # OakInk-Image dataset
@@ -202,7 +202,7 @@ Download the `OakBase.zip` (containing object parts segmentation and attributes)
 we provide demo script to show how to access the Oak Base:
 
 ```shell
-$ python scripts/demo_oak_base.py --data_dir path/to/data
+$ python scripts/demo_oak_base.py --data_dir path/to/OakInk
 ```
 
 # Citation
