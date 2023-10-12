@@ -128,6 +128,7 @@ class OakInkShape:
 
                         hand_pose, hand_shape, hand_tsl = get_hand_parameter(os.path.join(cur, f))
                         grasp_item = {
+                            "cate_id": cat,
                             "seq_id": "_".join(grasp_cat_match[1:]),
                             "obj_id": obj_id,
                             "joints": None,
