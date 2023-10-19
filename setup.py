@@ -34,7 +34,7 @@ get_dep()
 
 setup(
     name="oikit",
-    version="1.1.0",
+    version="1.2.0",
     author="Lixin Yang",
     author_email="siriusyang@sjtu.edu.cn",
     description="OakInk tooKIT",
