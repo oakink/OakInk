@@ -1,9 +1,13 @@
 data/**
+data2/**
 assets/**
 build/**
+temp/**
+
 
 .vscode/**
 
 **/__pycache__/**
+**/__MACOSC/**
 
 *.egg-info/**
