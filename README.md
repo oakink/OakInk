@@ -1,109 +1,92 @@
 <br />
 <p align="center">
   <p align="center">
-    <img src="docs/oakink_logo.png"" alt="Logo" width="40%">
+    <img src="docs/oakink_logo.png"" alt="Logo" width="30%">
   </p>
-
-<h1 align="center">A Large-scale Knowledge Repository for Understanding Hand-Object Interaction </h1>
+  <h2 align="center">A Large-scale Knowledge Repository for Understanding Hand-Object Interaction </h2>
 
   <p align="center">
-    <strong>CVPR, 2022</strong>
-    <br />
     <a href="https://lixiny.github.io"><strong>Lixin Yang*</strong></a>
     ·
     <a href="https://kailinli.top"><strong>Kailin Li*</strong></a>
     ·
     <a href=""><strong>Xinyu Zhan*</strong></a>
     ·
-    <a href=""><strong>Fei Wu</strong></a>
+    <strong>Fei Wu</strong>
     ·
     <a href="https://anran-xu.github.io"><strong>Anran Xu</strong></a>
     .
     <a href="https://liuliu66.github.io"><strong>Liu Liu</strong></a>
     ·
     <a href="https://mvig.sjtu.edu.cn"><strong>Cewu Lu</strong></a>
-    <br />
-    \star = equal contribution
   </p>
+  <h3 align="center">CVPR 2022</h3>
+
+  <div align="center">
+    <img src="docs/teaser.png" alt="Logo" width="100%">
+  </div>
+  <br/>
 
   <p align="center">
-  <a href='https://openaccess.thecvf.com/content/CVPR2022/html/Yang_OakInk_A_Large-Scale_Knowledge_Repository_for_Understanding_Hand-Object_Interaction_CVPR_2022_paper.html'>
-      <img src='https://img.shields.io/badge/Paper-PDF-yellow?style=flat&logo=googlescholar&logoColor=blue' alt='Paper PDF'>
+    <a href="https://arxiv.org/abs/2203.15709">
+      <img src='https://img.shields.io/badge/Paper-green?style=for-the-badge&logo=adobeacrobatreader&logoColor=white&labelColor=66cc00&color=94DD15' alt='Paper PDF'>
     </a>
-    <a href='https://arxiv.org/abs/2203.15709' style='padding-left: 0.5rem;'>
-      <img src='https://img.shields.io/badge/ArXiv-PDF-green?style=flat&logo=arXiv&logoColor=green' alt='ArXiv PDF'>
-    </a>
-    <a href='https://oakink.net' style='padding-left: 0.5rem;'>
-      <img src='https://img.shields.io/badge/Project-Page-blue?style=flat&logo=Google%20chrome&logoColor=blue' alt='Project Page'>
-    <a href='https://www.youtube.com/watch?v=vNTdeXlLdU8' style='padding-left: 0.5rem;'>
-      <img src='https://img.shields.io/badge/Youtube-Video-red?style=flat&logo=youtube&logoColor=red' alt='Youtube Video'>
-    </a>
+    <a href='https://oakink.net'>
+      <img src='https://img.shields.io/badge/Project-orange?style=for-the-badge&logo=Google%20chrome&logoColor=white&labelColor=D35400' alt='Project Page'></a>
+    <a href="https://www.youtube.com/watch?v=vNTdeXlLdU8"><img alt="youtube views" title="Subscribe to my YouTube channel" src="https://img.shields.io/badge/Video-red?style=for-the-badge&logo=youtube&labelColor=ce4630&logoColor=red"/></a>
   </p>
 </p>
-<br />
 
-This repo contains OakInk Toolkit **oikit** -- a Python package that provides data loading and visualization tools for the OakInk-Image, OakInk-Shape dataset and Oak base.
 
-# Installation
 
-We test the installation with:  
-<a href="https://releases.ubuntu.com/20.04/">
-<img alt="Ubuntu" src="https://img.shields.io/badge/Ubuntu-20.04-green?logo=ubuntu&logoColor=yelgreenlow">
-</a>
-<a href="https://developer.nvidia.com/cuda-11.1.0-download-archive">
-<img alt="PyTorch" src="https://img.shields.io/badge/CUDA-11.1-yellow?logo=nvidia&logoColor=yellow">
-</a>
-<a href="">
-<img alt="Python" src="https://img.shields.io/badge/Python-3.8-yellow?logo=python&logoColor=yellow">
-</a>
-<a href="https://pytorch.org/get-started/locally/">
-<img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-1.9.1-yellow?logo=pytorch&logoColor=red">
-</a>
+This repo contains the **OakInk data toolkit (oikit)** -- a Python package that provides data 
+preprocessing, splitting, and visualization tools for the OakInk knowledge repository.   
 
-First, clone the repo:
+OakInk contains three parts:
+* **OakBase:** Object Affordance Knowledge (Oak) base, including objects' part-level segmentation and attributes.
+* **OakInk-Image:** a video dataset with 3D hand-object pose and shape annotations.
+* **OakInk-Shape:** a 3D interacting pose dataset with hand and object mesh models.
 
-```Shell
-$ git clone https://github.com/lixiny/OakInk.git
-$ cd OakInk
-```
 
-There are two different ways to use **oikit**: **_stand-alone_** and **_import-as-package_**.
+### Summary on OakInk
 
-## stand-alone
+- It contains 3D models, part segmentation, and affordance labels of 1,800 common household objects.
+- It records human grasps with 100 (from 1,800) objects based on their affordances.
+  - It contains 792 multi-view video clips (230K images) complemented with annotation.
+  - Images are from four third-person views.
+  - It contains dynamic grasping and handover motions.
+  - It includes 3D ground-truth for MANO and objects.
+- It contains a total of 50k hand-object interaction pose pairs involving the 1,800 objects.
+  - 1k are from the recording, 49K are done via interaction transfer. 
 
-We use [conda](https://docs.conda.io/en/latest/) to manage environment.  
-The **_stand-alone_** mode will create an isolated conda env called: `oakink`:
 
-```Shell
-$ conda env create -f environment.yaml
-$ conda activate oakink
-$ pip install -r requirements.txt
-```
+### Why use OakInk:
+- For studying hand-object pose estimation and hand-held object reconstruction. 
+- For generating grasping pose, motion or handover with objects. 
+- For generating affordance-aware pose or motion for object manipulation.
+- For transferring hand pose or motion to a new object.
 
-This environment provide you a base environment to load and visualize the OakInk dataset.
 
-> :warning: In this case, you must use the **oikit** inside the OakInk directory.  
-> Otherwise, you will get an error: `ModuleNotFoundError: No module named 'oikit'`.
+### News
 
-## import-as-package (recommended)
 
-In most cases, you want to use **oikit** in other conda env.  
-To be able to import **oikit**, you need:
 
-1. activate the destination env (we suppose that python, cudatookit, and pytorch have already been installed)
-2. go to your `OakInk` directory and run:
+## Getting Started
+Clone the repo 
+  ```bash
+  $ git clone https://github.com/lixiny/OakInk.git
+  ```
+- Install environment: see [`docs/install.md`](docs/install.md)  
+- Get the datasets: see [`docs/datasets.md`](docs/datasets.md)
+- FAQ: see [`docs/faq.md`](docs/faq.md)
 
-```Shell
-$ pip install .
-```
+## Load and Visualize
 
-To test the installation is complete, run:
 
-```Shell
-$ python -c "from oikit.oi_image import OakInkImage"
-```
+## Train using OakInk
 
-no error, no worry. Now you can use **oikit** in this env.
+
+
 
 # Download Datasets
 
