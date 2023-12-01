@@ -11,6 +11,15 @@ from oikit.common import suppress_trimesh_logging
 from .utils import load_object, load_object_by_id, persp_project
 
 
+ALL_INTENT = {
+    "use": "0001",
+    "hold": "0002",
+    "liftup": "0003",
+    "handover": "0004",
+}
+ALL_INTENT_REV = {_v: _k for _k, _v in ALL_INTENT.items()}
+
+
 def decode_seq_cat(seq_cat):
     field_list = seq_cat.split("_")
     obj_id = field_list[0]
@@ -39,11 +48,41 @@ class OakInkImage:
             info_list = json.load(open(os.path.join(data_dir, "image", "anno", "split", split_key, "seq_test.json")))
         return info_list
 
-    def __init__(self, data_split="all", mode_split="default") -> None:
+    @staticmethod
+    def _get_info_str(info_item):
+        info_str = "__".join([str(x) for x in info_item])
+        info_str = info_str.replace("/", "__")
+        return info_str
+    
+    @staticmethod
+    def _get_handover_info(info_list):
+        hand_over_map = {}
+        hand_over_index_list = []
+        for idx, info_item in enumerate(info_list):
+            info = info_item[0]
+            seq_cat, _ = info.split("/")
+            _, action_id, _ = decode_seq_cat(seq_cat)
+            if action_id != "0004":
+                continue
+            sub_id = info_item[1]
+            alt_sub_id = 1 if sub_id == 0 else 0 # flip sub_id to get alt_sub_id
+            alt_info_item = (info_item[0], alt_sub_id, info_item[2], info_item[3])
+            hand_over_map[tuple(info_item)] = alt_info_item
+            hand_over_index_list.append(idx)
+        # sanity check: all alt_info_item should be in hand_over_map
+        for alt_info_item in hand_over_map.values():
+            assert alt_info_item in hand_over_map, str(alt_info_item)
+        # TODO: extra filter, like to limit for subject_id 0/1
+        return hand_over_map, hand_over_index_list
+
+    def __init__(self, data_split="all", mode_split="default", enable_handover=False) -> None:
         self._name = "OakInkImage"
         self._data_split = data_split
         self._mode_split = mode_split
         assert "OAKINK_DIR" in os.environ, "environment variable 'OAKINK_DIR' is not set"
+        self._enable_handover = enable_handover
+        if self._enable_handover:
+            assert self._data_split == "all", "handover need to be enabled in all split"
 
         self._data_dir = os.environ["OAKINK_DIR"]
         if self._data_split == "all":
@@ -87,6 +126,14 @@ class OakInkImage:
         # seq status
         with open(os.path.join(self._data_dir, "image", "anno", "seq_status.json"), "r") as f:
             self.seq_status = json.load(f)
+
+        # handover
+        if self._enable_handover:
+            self.handover_info, self.handover_sample_index_list = self._get_handover_info(self.info_list)
+            self.handover_info_list = list(self.handover_info.keys())
+        else:
+            self.handover_info, self.handover_sample_index_list = None, None
+            self.handover_info_list = None
 
     def __len__(self):
         return len(self.info_list)
@@ -218,6 +265,59 @@ class OakInkImage:
         info = self.info_list[idx][0]
         status = self.seq_status[info]
         return status
+    
+    def get_intent_mode(self, idx):
+        info_item = self.info_list[idx]
+        info = info_item[0]
+        seq_cat, _ = info.split("/")
+        _, action_id, _ = decode_seq_cat(seq_cat)
+        intent_mode = ALL_INTENT_REV[action_id]
+        return intent_mode
+
+    def get_hand_over(self, idx):
+        if self.handover_info is None: return None
+        info_item = tuple(self.info_list[idx])
+        if info_item not in self.handover_info:
+            return None
+
+        info = info_item[0]
+        status = self.seq_status[info]
+        seq_cat, _ = info.split("/")
+        _, action_id, _ = decode_seq_cat(seq_cat)
+        intent_mode = ALL_INTENT_REV[action_id]
+
+        alt_info_item = self.handover_info[info_item]
+        # load by alt_info
+        alt_res = self.load_by_info(alt_info_item)
+        # rename to alt
+        res = {
+            "sample_status": status,
+            "intent_mode": intent_mode,
+        }
+        for _k, _v in alt_res.items():
+            res[f"alt_{_k}"] = _v
+        return res 
+
+    def load_by_info(self, info_item):
+        info = info_item[0]
+        status = self.seq_status[info]
+        seq_cat, _ = info.split("/")
+        _, action_id, _ = decode_seq_cat(seq_cat)
+        intent_mode = ALL_INTENT_REV[action_id]
+
+        info_str = self._get_info_str(info_item)
+        joints_path = os.path.join(self._data_dir, "image", "anno", "hand_j", f"{info_str}.pkl")
+        with open(joints_path, "rb") as f:
+            joints_3d = pickle.load(f)
+        verts_path = os.path.join(self._data_dir, "image", "anno", "hand_v", f"{info_str}.pkl")
+        with open(verts_path, "rb") as f:
+            verts_3d = pickle.load(f)
+        return {
+            "sample_status": status,
+            "intent_mode": intent_mode,
+            "joints": joints_3d,
+            "verts": verts_3d,
+        }
 
 
 class OakInkImageSequence(OakInkImage):
