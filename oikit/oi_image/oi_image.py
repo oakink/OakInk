@@ -10,7 +10,6 @@ from oikit.common import suppress_trimesh_logging
 
 from .utils import load_object, load_object_by_id, persp_project
 
-
 ALL_INTENT = {
     "use": "0001",
     "hold": "0002",
@@ -32,18 +31,17 @@ def decode_seq_cat(seq_cat):
 
 
 class OakInkImage:
+
     @staticmethod
     def _get_info_list(data_dir, split_key, data_split):
         if data_split == "train+val":
             info_list = json.load(open(os.path.join(data_dir, "image", "anno", "split", split_key, "seq_train.json")))
         elif data_split == "train":
             info_list = json.load(
-                open(os.path.join(data_dir, "image", "anno", "split_train_val", split_key, "example_split_train.json"))
-            )
+                open(os.path.join(data_dir, "image", "anno", "split_train_val", split_key, "example_split_train.json")))
         elif data_split == "val":
             info_list = json.load(
-                open(os.path.join(data_dir, "image", "anno", "split_train_val", split_key, "example_split_val.json"))
-            )
+                open(os.path.join(data_dir, "image", "anno", "split_train_val", split_key, "example_split_val.json")))
         else:  # data_split == "test":
             info_list = json.load(open(os.path.join(data_dir, "image", "anno", "split", split_key, "seq_test.json")))
         return info_list
@@ -53,7 +51,7 @@ class OakInkImage:
         info_str = "__".join([str(x) for x in info_item])
         info_str = info_str.replace("/", "__")
         return info_str
-    
+
     @staticmethod
     def _get_handover_info(info_list):
         hand_over_map = {}
@@ -65,7 +63,7 @@ class OakInkImage:
             if action_id != "0004":
                 continue
             sub_id = info_item[1]
-            alt_sub_id = 1 if sub_id == 0 else 0 # flip sub_id to get alt_sub_id
+            alt_sub_id = 1 if sub_id == 0 else 0  # flip sub_id to get alt_sub_id
             alt_info_item = (info_item[0], alt_sub_id, info_item[2], info_item[3])
             hand_over_map[tuple(info_item)] = alt_info_item
             hand_over_index_list.append(idx)
@@ -93,7 +91,7 @@ class OakInkImage:
             self.info_list = self._get_info_list(self._data_dir, "split1", self._data_split)
         elif self._mode_split == "object":
             self.info_list = self._get_info_list(self._data_dir, "split2", self._data_split)
-        else: # self._mode_split == "handobject":
+        else:  # self._mode_split == "handobject":
             self.info_list = self._get_info_list(self._data_dir, "split0_ho", self._data_split)
 
         self.info_str_list = []
@@ -179,9 +177,8 @@ class OakInkImage:
         return persp_project(verts_3d, cam_intr)
 
     def get_mano_pose(self, idx):
-        general_info_path = os.path.join(
-            self._data_dir, "image", "anno", "general_info", f"{self.info_str_list[idx]}.pkl"
-        )
+        general_info_path = os.path.join(self._data_dir, "image", "anno", "general_info",
+                                         f"{self.info_str_list[idx]}.pkl")
         with open(general_info_path, "rb") as f:
             general_info = pickle.load(f)
         raw_hand_anno = general_info["hand_anno"]
@@ -199,9 +196,8 @@ class OakInkImage:
         return hand_pose.astype(np.float32)
 
     def get_mano_shape(self, idx):
-        general_info_path = os.path.join(
-            self._data_dir, "image", "anno", "general_info", f"{self.info_str_list[idx]}.pkl"
-        )
+        general_info_path = os.path.join(self._data_dir, "image", "anno", "general_info",
+                                         f"{self.info_str_list[idx]}.pkl")
         with open(general_info_path, "rb") as f:
             general_info = pickle.load(f)
         raw_hand_anno = general_info["hand_anno"]
@@ -265,7 +261,7 @@ class OakInkImage:
         info = self.info_list[idx][0]
         status = self.seq_status[info]
         return status
-    
+
     def get_intent_mode(self, idx):
         info_item = self.info_list[idx]
         info = info_item[0]
@@ -275,7 +271,8 @@ class OakInkImage:
         return intent_mode
 
     def get_hand_over(self, idx):
-        if self.handover_info is None: return None
+        if self.handover_info is None:
+            return None
         info_item = tuple(self.info_list[idx])
         if info_item not in self.handover_info:
             return None
@@ -296,7 +293,7 @@ class OakInkImage:
         }
         for _k, _v in alt_res.items():
             res[f"alt_{_k}"] = _v
-        return res 
+        return res
 
     def load_by_info(self, info_item):
         info = info_item[0]
@@ -321,7 +318,8 @@ class OakInkImage:
 
 
 class OakInkImageSequence(OakInkImage):
-    def __init__(self, seq_id, view_id) -> None:
+
+    def __init__(self, seq_id, view_id, enable_handover=False) -> None:
 
         self.framedata_color_name = [
             "north_east_color",
@@ -358,3 +356,16 @@ class OakInkImageSequence(OakInkImage):
 
         self._image_size = (848, 480)  # (W, H)
         self._hand_side = "right"
+
+        self._enable_handover = enable_handover
+        # seq status
+        with open(os.path.join(self._data_dir, "image", "anno", "seq_status.json"), "r") as f:
+            self.seq_status = json.load(f)
+
+        # handover
+        if self._enable_handover:
+            self.handover_info, self.handover_sample_index_list = self._get_handover_info(self.info_list)
+            self.handover_info_list = list(self.handover_info.keys())
+        else:
+            self.handover_info, self.handover_sample_index_list = None, None
+            self.handover_info_list = None
