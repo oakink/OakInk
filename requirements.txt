@@ -11,5 +11,6 @@ plyfile
 scikit-image
 chumpy>=0.70
 open3d>=0.16.0
+opendr==0.78
 manotorch@git+https://github.com/lixiny/manotorch.git@v0.0.2
 pytorch3d@git+https://github.com/facebookresearch/pytorch3d@v0.7.2
