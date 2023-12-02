@@ -3,6 +3,7 @@ data2/**
 assets/**
 build/**
 temp/**
+tmp/**
 
 
 .vscode/**
