@@ -36,3 +36,5 @@ To be able to import **oikit**, you need:
 
 
 ## Get MANO asset
+
+Download `mano_v1_2.zip` from the [MANO](https://mano.is.tue.mpg.de) webpage, unzip and copy it into the  `assets` folder.

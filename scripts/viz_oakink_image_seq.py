@@ -92,7 +92,7 @@ if __name__ == "__main__":
                         default="A01001_0003_0001/2021-09-26-20-01-24",
                         help="sequence id, see OAKINK_DIR/image/anno/seq_status.json")
     parser.add_argument("--view_id", type=int, default=0, choices=[0, 1, 2, 3], help="view id (camera id), int: 0-3")
-    parser.add_argument("--draw_mode", type=str, default="wireframe", choices=["wireframe", "mesh"])
+    parser.add_argument("--draw_mode", type=str, default="wireframe", choices=["wireframe", "mesh"], help="draw mode")
     arg = parser.parse_args()
     os.environ["OAKINK_DIR"] = arg.data_dir
     main(arg)

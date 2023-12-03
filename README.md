@@ -40,7 +40,7 @@
 
 
 This repo contains the **OakInk data toolkit (oikit)** -- a Python package that provides data 
-preprocessing, splitting, and visualization tools for the OakInk knowledge repository.   
+loading, splitting, and visualization tools for the OakInk knowledge repository.   
 
 OakInk contains three parts:
 * **OakBase:** Object Affordance Knowledge (Oak) base, including objects' part-level segmentation and attributes.
@@ -67,134 +67,49 @@ OakInk contains three parts:
 - For transferring hand pose or motion to a new object.
 
 
-### News
-
-
-
-## Getting Started
+### Getting Started
 Clone the repo 
   ```bash
   $ git clone https://github.com/lixiny/OakInk.git
   ```
 - Install environment: see [`docs/install.md`](docs/install.md)  
-- Get the datasets: see [`docs/datasets.md`](docs/datasets.md)
-- FAQ: see [`docs/faq.md`](docs/faq.md)
+- Get datasets: see [`docs/datasets.md`](docs/datasets.md)
 
-## Load and Visualize
+### Load and Visualize
+```bash
+# visualize OakInk-Image mesh on sequence level:
+#   * --draw_mode [mesh, wireframe] to switch between mesh and wireframe
+#   * --seq_id: select sequence id from OAKINK_DIR/image/anno/seq_status.json to visualize
+#   * --view_id: select from [0, 1, 2, 3] for visualize from different views.
+python scripts/viz_oakink_image_seq.py --draw_mode mesh --view_id 1
 
+# use OakInkImage to load data_split: train, mode: subject (SP1) and visualize:
+#   * --data_split: select from [train, val, test, all]
+#   * --mode_split: select from [default, object, subject, handobject]
+python scripts/viz_oakink_image.py --data_split train --mode_split subject
 
-## Train using OakInk
+# use OakInkShape to load object category: teapot and intent: use:
+#   * --categories: select from OAKINK_DIR/shape/metaV2/yodaobject_cat.json, or "all"
+#   * --intent_mode: select from [use, hold, liftup, handover] or "all"
+#   * --data_split: select from [train, val, test, all]
+python scripts/viz_oakink_shape.py --categories teapot --intent_mode use
+# press `N` to load next sample
 
+# use OakInkShape to load all the training grasps
+python scripts/viz_oakink_shape.py --categories all --data_split train
 
-
-
-# Download Datasets
-
-1. Download the datasets (OakInk-Image and OakInk-Shape) from the [project site](http://www.oakink.net).
-   Arrange all zip files into a directory: `path/to/OakInk` as follow:
-
-   ```
-    .
-    ├── image
-    │   ├── anno.zip
-    │   ├── obj.zip
-    │   └── stream_zipped
-    │       ├── oakink_image_v2.z01
-    │       ├── ...
-    │       ├── oakink_image_v2.z10
-    │       └── oakink_image_v2.zip
-    └── shape
-        ├── metaV2.zip
-        ├── OakInkObjectsV2.zip
-        ├── oakink_shape_v2.zip
-        └── OakInkVirtualObjectsV2.zip
-   ```
-
-2. Extract the files.
-
-- For the `image/anno.zip`, `image/obj.zip` and `shape/*.zip`, you can simply _unzip_ it at the same level of the `.zip` file:
-  ```Shell
-  $ unzip obj.zip
-  ```
-- For the 11 split zip files in `image/stream_zipped`, you need to _cd_ into the `image/` directory, run:
-  ```Shell
-  $ zip -F ./stream_zipped/oakink_image_v2.zip --out single-archive.zip
-  ```
-  This will combine the split zip files into a single .zip, at `image/single-archive.zip`. Finally, _unzip_ the combined archive:
-  ```Shell
-  $ unzip single-archive.zip
-  ```
-  After all the extractions are finished, you will have a your directory `path/to/OakInk` of the following structure:
-  ```
-  .
-  ├── image
-  │   ├── anno
-  │   ├── obj
-  │   └── stream_release_v2
-  │       ├── A01001_0001_0000
-  │       ├── ....
-  │
-  └── shape
-      ├── metaV2
-      ├── OakInkObjectsV2
-      ├── oakink_shape_v2
-      └── OakInkVirtualObjectsV2
-  ```
-
-3. Set the environment variable `$OAKINK_DIR` to your dataset folder:
-
-   ```Shell
-   $ export OAKINK_DIR=path/to/OakInk
-   ```
-
-4. Download `mano_v1_2.zip` from the [MANO website](https://mano.is.tue.mpg.de), unzip the file and create symlink in `assets` folder:
-   ```Shell
-   $ mkdir assets
-   $ ln -s path/to/mano_v1_2 assets/
-   ```
-
-## Load Dataset and Visualize
-
-we provide three scripts to provide basic usage for data loading and visualizing:
-
-1. visualize OakInk-Image set on sequence level:
-   ```Shell
-   $ python scripts/viz_oakink_image_seq.py (--help)
-   ```
-2. use OakInkImage to load data_split: `all` and visualize:
-
-   ```Shell
-   $ python scripts/viz_oakink_image.py (--help)
-   ```
-
-3. visualize OakInk-Shape set with object category and subject intent
-   ```Shell
-   $ python scripts/viz_oakink_shape.py --categories teapot --intent_mode use (--help)
-   ```
-
-# Download Oak Base
-
-Download the `OakBase.zip` (containing object parts segmentation and attributes) from the [project site](http://www.oakink.net). unzip it to `path/to/OakInk`. The directory structure should be like this:
-
-```shell
-  ├── image      # OakInk-Image dataset
-  ├── shape      # OakInk-Shape dataset
-  └── OakBase    # Oak Base
+# use OakInkShape to load all the training grasps in handover
+python scripts/viz_oakink_shape.py --categories all --data_split train --intent_mode handover
 ```
 
-we provide demo script to show how to access the Oak Base:
-
-```shell
-$ python scripts/demo_oak_base.py --data_dir path/to/OakInk
-```
-
-# Citation
+### Citation
 
 If you find OakInk dataset and **oikit** useful for your research, please considering cite us:
-
-    @InProceedings{YangCVPR2022OakInk,
-      author    = {Yang, Lixin and Li, Kailin and Zhan, Xinyu and Wu, Fei and Xu, Anran and Liu, Liu and Lu, Cewu},
-      title     = {{OakInk}: A Large-Scale Knowledge Repository for Understanding Hand-Object Interaction},
-      booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
-      year      = {2022},
-    }
+```bibtex
+@inproceedings{YangCVPR2022OakInk,
+  author    = {Yang, Lixin and Li, Kailin and Zhan, Xinyu and Wu, Fei and Xu, Anran and Liu, Liu and Lu, Cewu},
+  title     = {{OakInk}: A Large-Scale Knowledge Repository for Understanding Hand-Object Interaction},
+  booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2022},
+}
+```
