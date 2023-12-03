@@ -201,7 +201,7 @@ For Hand Mesh Recovery task, we offer **three** different split modes.
     * Test: 83,503 frames; in which 37,042 frames are from two-hand sequences.
     ```
 
-* **`SP1`: object split (split by objects)**  
+* **`SP2`: object split (split by objects)**  
     We randomly select 25 objects (out of total 100 objects) and mark all sequences that contain these objects as the `test` sequences, while the sequences that contain the rest 75 objects form the `train/val` sequences. Inside `train/val` split, we randomly select 5 objects (out of 75 objects) to form the `val` set and the rest objects form the `train` set.  
     ```
     Train+Val set
@@ -216,7 +216,7 @@ For Hand Mesh Recovery task, we offer **three** different split modes.
 
 #### Hand-Object Pose Estimation (HOPE)
 For Hand-Object Pose Estimation task, we offer **one** split mode based on views.
-* **`SP0`. default split (split by views)**  
+* **`SP0`: default split (split by views)**  
     We randomly select one view per sequence and mark all images from this view as the `test` sequence, while the rest three views form the `train/val` sequences.
     ```
      Train+Val set
