@@ -257,5 +257,6 @@ Including 1,561 use, 1,239 hold, 1,278 lift-up, 1,222 hand-out, and 1,222 receiv
 Including 1,473 use, 1,115 hold, 1,122 lift-up, 1,256 hand-out, and 1,256 receive.
 
 * Total set
-We release 1,801 object CAD models, of which 1,657 models have corresponding grasping hand poses. The total number of grasping poses is 62,046
+We release 1,801 object CAD models, of which 1,657 models have corresponding grasping hand poses. 
+The total number of grasping poses is 62,046.
 ```
