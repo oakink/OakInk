@@ -37,4 +37,8 @@ To be able to import **oikit**, you need:
 
 ## Get MANO asset
 
-Download `mano_v1_2.zip` from the [MANO](https://mano.is.tue.mpg.de) webpage, unzip and copy it into the  `assets` folder.
+Get the MANO hand model `mano_v1_2.zip` from the [MANO website](https://mano.is.tue.mpg.de).  
+1. click **`Download`** on the top menu, this requires register & login.
+2. on the Download page, navigate to **Models & Code** section, and click `Models & Code`.  
+
+Unzip `mano_v1_2.zip` and copy it into the `assets` folder.
