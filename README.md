@@ -45,7 +45,7 @@ loading, splitting, and visualization tools for the OakInk knowledge repository.
 OakInk contains three parts:
 * **OakBase:** Object Affordance Knowledge (Oak) base, including objects' part-level segmentation and attributes.
 * **OakInk-Image:** a video dataset with 3D hand-object pose and shape annotations.
-* **OakInk-Shape:** a 3D interacting pose dataset with hand and object mesh models.
+* **OakInk-Shape:** a 3D grasping pose dataset with hand and object mesh models.
 
 
 ### Summary on OakInk
