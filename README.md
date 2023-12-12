@@ -102,6 +102,11 @@ python scripts/viz_oakink_shape.py --categories all --data_split train
 python scripts/viz_oakink_shape.py --categories all --data_split train --intent_mode handover
 ```
 
+### Train and evaluate OakInk baselines
+* [Hand Mesh Recovery](https://github.com/oakink/OakInk-HMR): recovery hand mesh from monocular image. 
+* [Grasp Generation](https://github.com/oakink/OakInk-Grasp-Generation): generate human-like hand mesh grasping a given object.
+
+
 ### Citation
 
 If you find OakInk dataset and **oikit** useful for your research, please considering cite us:
