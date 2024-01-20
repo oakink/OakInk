@@ -14,7 +14,7 @@ def main():
     fnames = glob(os.path.join(zipped_dir, "**/*"), recursive=True)
     fnames = [f for f in fnames if os.path.isfile(f)]  # remove dir names
 
-    with open(os.path.join("assets", "checksum.json"), "r") as f:
+    with open(os.path.join("docs", "checksum.json"), "r") as f:
         gt_checksum = json.load(f)
 
     pbar = tqdm(fnames)

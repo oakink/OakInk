@@ -25,7 +25,7 @@ def main():
     zipped_dir = os.path.join(oakink_dir, "zipped")
     os.makedirs(zipped_dir, exist_ok=True)
 
-    with open("assets/gdrive_ids.json", "r") as f:
+    with open("docs/gdrive_ids.json", "r") as f:
         gdrive_ids = f.read()
 
     for fname in oakink_latest_release:
