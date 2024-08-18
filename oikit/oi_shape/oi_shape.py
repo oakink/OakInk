@@ -168,6 +168,7 @@ class OakInkShape:
                             "source": source,
                             "pass_stage": pass_stage,
                             "alt_grasp_item": None,
+                            "file_path": os.path.join(cur, f),
                         }
                         grasp_list.append(grasp_item)
         # endregion <<<<
