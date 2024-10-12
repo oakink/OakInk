@@ -39,7 +39,7 @@ and unzip all the files:
 [7zip](https://www.7-zip.org/download.html) is required. Install it via `sudo apt install p7zip-full`
 
 ```bash
-$ python unzip_all.py
+$ python scripts/unzip_all.py
 ```
 
 After unzipping, the directory structure should look like this:
