@@ -33,7 +33,7 @@ Arrange all zip files into the directory: `$OAKINK_DIR/zipped` as follow:
 ```
 After download, verify the checksum:
 ```bash
-$ python verify_checksum.py
+$ python scripts/verify_checksum.py
 ```
 and unzip all the files:  
 [7zip](https://www.7-zip.org/download.html) is required. Install it via `sudo apt install p7zip-full`
