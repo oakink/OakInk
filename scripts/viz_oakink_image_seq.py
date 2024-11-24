@@ -16,7 +16,7 @@ CENTER_IDX = 0
 
 def viz_a_seq(oi_seq: OakInkImageSequence, draw_mode="wireframe", render=None, hand_faces=None, mano_layer=None):
     for i in range(len(oi_seq)):
-        print("sample info:".oi_seq.info_str_list[i])
+        print("sample info:", oi_seq.info_str_list[i])
         image = oi_seq.get_image(i)
         if draw_mode == "wireframe":
             joints_2d = oi_seq.get_joints_2d(i)
