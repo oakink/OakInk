@@ -3,22 +3,36 @@ import json
 import os
 
 import cv2
+import torch
 import numpy as np
 from oikit.oi_image.oi_image import OakInkImageSequence
 from oikit.oi_image.viz_tool import caption_view, draw_wireframe, draw_wireframe_hand, OpenDRRenderer
 from oikit.oi_image.utils import persp_project
 from termcolor import cprint
-from manotorch.manolayer import ManoLayer
+from manotorch.manolayer import ManoLayer, MANOOutput
+
+CENTER_IDX = 0
 
 
-def viz_a_seq(oi_seq: OakInkImageSequence, draw_mode="wireframe", render=None, hand_faces=None):
+def viz_a_seq(oi_seq: OakInkImageSequence, draw_mode="wireframe", render=None, hand_faces=None, mano_layer=None):
     for i in range(len(oi_seq)):
+        print("sample info:".oi_seq.info_str_list[i])
         image = oi_seq.get_image(i)
         if draw_mode == "wireframe":
             joints_2d = oi_seq.get_joints_2d(i)
             corners_2d = oi_seq.get_corners_2d(i)
         else:
-            hand_verts = oi_seq.get_verts_3d(i)
+            # hand_verts = oi_seq.get_verts_3d(i)
+            mano_pose = oi_seq.get_mano_pose(i)  # (16, 3)
+            mano_shape = oi_seq.get_mano_shape(i)
+            mano_out: MANOOutput = mano_layer(
+                torch.from_numpy(mano_pose).unsqueeze(0).reshape(1, 48),
+                torch.from_numpy(mano_shape).unsqueeze(0))
+
+            # @NOTE: mano translation is dependent on how you define the center joint in the mano_layer
+            hand_tsl = oi_seq.get_joints_3d(i)[CENTER_IDX]
+
+            hand_verts = mano_out.verts.squeeze(0).numpy() + hand_tsl
             obj_verts = oi_seq.get_obj_verts_3d(i)
             obj_faces = oi_seq.get_obj_faces(i)
 
@@ -65,19 +79,20 @@ def main(arg):
     seq_id_list = list(set([info[0] for info in info_list_all]))
 
     render = OpenDRRenderer()
-    hand_faces = ManoLayer(mano_assets_root="assets/mano_v1_2").get_mano_closed_faces()
+    mano_layer = ManoLayer(mano_assets_root="assets/mano_v1_2", flat_hand_mean=True, center_idx=CENTER_IDX)
+    hand_faces = mano_layer.get_mano_closed_faces()
 
     if arg.viz_all_seq:
         for seq_id in seq_id_list:
             view_id = np.random.randint(4)
             oi_seq = OakInkImageSequence(seq_id=seq_id, view_id=view_id, enable_handover=True)
             cprint(f"viz_all: {oi_seq._name}", "yellow")
-            viz_a_seq(oi_seq, arg.draw_mode, render=render, hand_faces=hand_faces)
+            viz_a_seq(oi_seq, arg.draw_mode, render=render, hand_faces=hand_faces, mano_layer=mano_layer)
     else:
         # viz one seq
         oi_seq = OakInkImageSequence(seq_id=arg.seq_id, view_id=arg.view_id, enable_handover=True)
         cprint(f"viz_one: {oi_seq._name}", "yellow")
-        viz_a_seq(oi_seq, arg.draw_mode, render=render, hand_faces=hand_faces)
+        viz_a_seq(oi_seq, arg.draw_mode, render=render, hand_faces=hand_faces, mano_layer=mano_layer)
 
     print("EXIT")
 
@@ -89,7 +104,7 @@ if __name__ == "__main__":
     parser.add_argument("--viz_all_seq", action="store_true", help="visualize all sequences")
     parser.add_argument("--seq_id",
                         type=str,
-                        default="A01001_0003_0001/2021-09-26-20-01-24",
+                        default="A01001_0001_0000/2021-09-26-19-59-58",
                         help="sequence id, see OAKINK_DIR/image/anno/seq_status.json")
     parser.add_argument("--view_id", type=int, default=0, choices=[0, 1, 2, 3], help="view id (camera id), int: 0-3")
     parser.add_argument("--draw_mode", type=str, default="wireframe", choices=["wireframe", "mesh"], help="draw mode")
