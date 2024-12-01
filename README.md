@@ -4,6 +4,7 @@
     <img src="docs/oakink_logo.png"" alt="Logo" width="30%">
   </p>
   <h2 align="center">A Large-scale Knowledge Repository for Understanding Hand-Object Interaction </h2>
+  <h3 align="center"> :nut_and_bolt: Dataset Toolkit </h3>
 
   <p align="center">
     <a href="https://lixiny.github.io"><strong>Lixin Yang*</strong></a>
